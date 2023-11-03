@@ -57,12 +57,26 @@ app.delete('/api/persons/:id', (request, response) => {
 const generateId = () => Math.floor(Math.random() * 100000000);
 
 app.post('/api/persons', (request, response) => {
+	const { name, number } = request.body;
+	if (!name && !number) {
+		return response.status(400).json({
+			error: 'missing required data',
+		});
+	}
+	const duplicateName = persons.find(
+		(person) => person.name.toLowerCase() === name.toLowerCase()
+	);
+	if (duplicateName) {
+		return response.status(400).json({
+			error: 'name must be unique',
+		});
+	}
 	let id = generateId();
 	const duplicateId = persons.find((person) => person.id === id);
 	while (duplicateId) {
 		id = generateId;
 	}
-	const person = { id, ...request.body };
+	const person = { id, name, number };
 	persons = persons.concat(person);
 	response.json(person);
 });
