@@ -69,7 +69,7 @@ const generateId = () => Math.floor(Math.random() * 100000000);
 
 app.post('/api/persons', (request, response) => {
 	const { name, number } = request.body;
-	if (!name && !number) {
+	if (name && number) {
 		return response.status(400).json({
 			error: 'missing required data',
 		});
@@ -79,6 +79,17 @@ app.post('/api/persons', (request, response) => {
 		number,
 	});
 	person.save().then((returnedPerson) => response.json(returnedPerson));
+});
+
+app.put('/api/persons/:id', (request, response) => {
+	const { name, number } = request.body;
+	const person = {
+		name,
+		number,
+	};
+	Person.findByIdAndUpdate(request.params.id, person, { new: true })
+		.then((updatedPerson) => response.json(updatedPerson))
+		.catch((error) => next(error));
 });
 
 const PORT = process.env.PORT;
