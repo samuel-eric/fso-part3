@@ -74,22 +74,11 @@ app.post('/api/persons', (request, response) => {
 			error: 'missing required data',
 		});
 	}
-	const duplicateName = persons.find(
-		(person) => person.name.toLowerCase() === name.toLowerCase()
-	);
-	if (duplicateName) {
-		return response.status(400).json({
-			error: 'name must be unique',
-		});
-	}
-	let id = generateId();
-	const duplicateId = persons.find((person) => person.id === id);
-	while (duplicateId) {
-		id = generateId;
-	}
-	const person = { id, name, number };
-	persons = persons.concat(person);
-	response.json(person);
+	const person = new Person({
+		name,
+		number,
+	});
+	person.save().then((returnedPerson) => response.json(returnedPerson));
 });
 
 const PORT = process.env.PORT;
