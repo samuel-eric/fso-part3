@@ -11,8 +11,30 @@ mongoose
 	);
 
 const personSchema = new mongoose.Schema({
-	name: String,
-	number: String,
+	name: {
+		type: String,
+		minLength: 3,
+		required: true,
+	},
+	number: {
+		type: String,
+		minLength: 8,
+		validate: {
+			validator: (value) => {
+				const numberArr = value.split('-');
+				if (
+					!isNaN(numberArr[0]) &&
+					!isNaN(numberArr[1]) &&
+					numberArr.length === 2 &&
+					numberArr[0].length >= 2 &&
+					numberArr[0].length <= 3
+				) {
+					return true;
+				}
+				return false;
+			},
+		},
+	},
 });
 
 personSchema.set('toJSON', {
